@@ -69,6 +69,7 @@ export class AdminService {
       status: statusGroups.reduce((map, row) => ({
         ...map,
         [row.status]: Number(row.count),
+      }), {} as Record<string, number>),
     };
   }
 
@@ -168,14 +169,14 @@ export class AdminService {
 
     try {
       details.database = (await this.dbHealth.pingCheck('database')).database;
-    } catch (error) {
+    } catch (error: any) {
       overallStatus = 'error';
       details.database = error?.causes?.database || { status: 'down' };
     }
 
     try {
       details.redis = await this.redisHealth.isHealthy('redis');
-    } catch (error) {
+    } catch (error: any) {
       overallStatus = 'error';
       details.redis = error?.causes?.redis || { status: 'down' };
     }

@@ -1,16 +1,11 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import * as path from 'path';
 
 /**
  * DataSource configuration for database seeding and migrations.
  * This file is used by TypeORM CLI and seed scripts.
  */
-
-// Handle both CommonJS and ES Module contexts
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -19,13 +14,8 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || process.env.DATABASE_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || process.env.DATABASE_PASSWORD || 'postgres',
   database: process.env.DB_NAME || process.env.DATABASE_NAME || 'uzima',
+  entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],
+  migrations: [path.join(__dirname, 'migrations', '*.{ts,js}')],
   synchronize: false,
-  logging: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'],
-  entities: [
-    __dirname + '/../**/*.entity{.ts,.js}',
-  ],
-  migrations: [__dirname + '/migrations/*{.ts,.js}'],
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  logging: process.env.DB_LOGGING === 'true',
 });
-
-export default AppDataSource;

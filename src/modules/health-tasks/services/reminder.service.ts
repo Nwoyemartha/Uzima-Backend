@@ -67,9 +67,9 @@ export class ReminderService {
         await this.sendReminder(reminder);
         processedCount++;
       } catch (error) {
-        this.logger.error(`Failed to send reminder ${reminder.id}: ${error.message}`);
+        this.logger.error(`Failed to send reminder ${reminder.id}: ${(error as Error).message}`);
         reminder.status = ReminderStatus.FAILED;
-        reminder.deliveryTracking = { error: error.message, timestamp: new Date() };
+        reminder.deliveryTracking = { error: (error as Error).message, timestamp: new Date() };
         await this.reminderRepository.save(reminder);
       }
     }

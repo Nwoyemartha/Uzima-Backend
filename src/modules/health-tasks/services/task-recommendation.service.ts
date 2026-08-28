@@ -24,9 +24,9 @@ export class TaskRecommendationService {
     const userStats = await this.analyticsService.getUserTaskStats(userId);
     const categoryEngagement = await this.getCategoryEngagement(userId);
 
-    const availableTemplates = this.templatesService.getAllTemplates?.() || [];
+    const availableTemplates = (this.templatesService as any).getAllTemplates?.() || [];
 
-    if (Object.keys(categoryEngagement).length === 0 || userStats.totalCompletions === 0) {
+    if (Object.keys(categoryEngagement).length === 0 || (userStats as any).totalCompletions === 0) {
       return this.getDefaultRecommendations(limit);
     }
 
@@ -48,12 +48,12 @@ export class TaskRecommendationService {
       .slice(0, limit);
   }
 
-  private async getCategoryEngagement(userId: string): Promise<Record<TaskCategory, number>> {
+  private async getCategoryEngagement(userId: string): Promise<Record<string, number>> {
     // Extend analytics in future for real data
     return {};
   }
 
-  private calculateMatchScore(template: any, engagement: Record<TaskCategory, number>): number {
+  private calculateMatchScore(template: any, engagement: Record<string, number>): number {
     const base = engagement[template.fields.category] || 0;
     return Math.min(1, base * 0.8 + (template.fields.xlmReward ? 0.15 : 0));
   }
@@ -65,9 +65,9 @@ export class TaskRecommendationService {
 
   private getDefaultRecommendations(limit: number): RecommendedTask[] {
     const defaults: RecommendedTask[] = [
-      { id: 'def-1', title: 'Daily Hydration', description: 'Log water intake', category: TaskCategory.WELLNESS, xlmReward: 5, matchScore: 0.9, reason: 'Core wellness habit' },
-      { id: 'def-2', title: 'Morning Movement', description: 'Light stretch or walk', category: TaskCategory.PHYSICAL, xlmReward: 7, matchScore: 0.85, reason: 'Build healthy routine' },
-      { id: 'def-3', title: 'Mindful Moment', description: '5 min breathing', category: TaskCategory.MINDFULNESS, xlmReward: 6, matchScore: 0.8, reason: 'Mental health foundation' },
+      { id: 'def-1', title: 'Daily Hydration', description: 'Log water intake', category: TaskCategory.HYDRATION, xlmReward: 5, matchScore: 0.9, reason: 'Core wellness habit' },
+      { id: 'def-2', title: 'Morning Movement', description: 'Light stretch or walk', category: TaskCategory.FITNESS, xlmReward: 7, matchScore: 0.85, reason: 'Build healthy routine' },
+      { id: 'def-3', title: 'Mindful Moment', description: '5 min breathing', category: TaskCategory.MENTAL, xlmReward: 6, matchScore: 0.8, reason: 'Mental health foundation' },
     ];
     return defaults.slice(0, limit);
   }

@@ -3,7 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { ThrottlerStorageRedisService } from '@nestjs/throttler-storage-redis';
+import { ThrottlerStorage } from '@nestjs/throttler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RateLimitGuard } from './common/guards/rate-limit.guard';
 import { AppController } from './app.controller';
@@ -61,14 +61,6 @@ import { HealthModule } from './health/health.module';
       useFactory: (configService) => {
         const config = redisConfig(configService);
         return {
-          // Use Redis storage for distributed rate limiting across multiple instances
-          storage: new ThrottlerStorageRedisService({
-            host: config.host,
-            port: config.port,
-            password: config.password,
-            db: config.db,
-            tls: config.tls ? {} : undefined,
-          }),
           throttlers: [
             {
               name: 'default',

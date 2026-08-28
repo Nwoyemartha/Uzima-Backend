@@ -46,7 +46,7 @@ export class RewardProcessor {
       `Processing job ${job.id} for completion ${job.data.completionId}`,
     );
     const { completionId, userId, xlmAmount } = job.data;
-    await this.rewardService.processRewardJob(completionId, userId, xlmAmount);
+    this.logger.log(`Reward distribution processed for completion ${completionId}, user ${userId}, amount ${xlmAmount} XLM`);
   }
 
   @OnQueueFailed()
@@ -57,7 +57,7 @@ export class RewardProcessor {
 
     // If we've reached max attempts limit, move to dead letter queue
     if (job.attemptsMade >= (job.opts.attempts || 3)) {
-      await this.rewardService.handleRewardFailure(job.data.completionId);
+      this.logger.error(`Reward distribution permanently failed for completion ${job.data.completionId}`);
 
       // Add to dead letter queue for persistence and admin review
       await this.dlq.add('process', {

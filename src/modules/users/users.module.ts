@@ -13,7 +13,6 @@ import { UsersController } from './users.controller';
 import { DataExportDownloadController } from './controllers/data-export-download.controller';
 import { UsersService } from './users.service';
 import { QueueModule } from '../../queue/queue.module';
-import { UserActivity } from '../../database/entities/user-activity.entity';
 import { ActivityTrackerService } from './services/activity-tracker.service';
 import { AvatarService } from './services/avatar.service';
 import { DataExportService } from './services/data-export.service';
@@ -24,6 +23,10 @@ import { Notification } from '../../notifications/entities/notification.entity';
 import { ReferralRecord } from '../../referral/entities/referral-record.entity';
 import { QueueService } from '../../shared/queue/queue.service';
 import { NotificationsModule } from '../../notifications/notifications.module';
+import { HealthTask } from '../../tasks/entities/health-task.entity';
+import { ActivityFeedService } from './services/activity-feed.service';
+import { StorageService } from '../../storage/storage.service';
+import { Coupon } from '../../entities/coupon.entity';
 
 @Module({
   controllers: [
@@ -43,7 +46,6 @@ import { NotificationsModule } from '../../notifications/notifications.module';
       ReferralRecord,
       Coupon,
       HealthTask,
-      Notification,
     ]),
     CacheModule.register({
       ttl: 300,
@@ -69,12 +71,8 @@ import { NotificationsModule } from '../../notifications/notifications.module';
     DataExportService,
     DataExportProcessor,
     QueueService,
-  ],
     ActivityFeedService,
-    AvatarService,
     StorageService,
-    DataExportProcessor,
   ],
-  exports: [UsersService, UserSearchService, PhoneVerificationService],
 })
 export class UsersModule {}

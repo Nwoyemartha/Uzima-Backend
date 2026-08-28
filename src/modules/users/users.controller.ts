@@ -66,8 +66,7 @@ type AuthenticatedRequest = {
 
 @ApiTags('users')
 @ApiBearerAuth()
-@Version('1')
-@Controller({ path: 'users' })
+@Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(

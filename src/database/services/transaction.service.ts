@@ -366,7 +366,7 @@ export function Transaction(options: TransactionOptions = {}) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
-      const transactionService = this.transactionService as TransactionService;
+      const transactionService = (this as any).transactionService as TransactionService;
       if (!transactionService) {
         return originalMethod.apply(this, args);
       }
@@ -377,14 +377,14 @@ export function Transaction(options: TransactionOptions = {}) {
         return await transactionService.execute(
           context,
           async (queryRunner) => {
-            this.currentQueryRunner = queryRunner;
+            (this as any).currentQueryRunner = queryRunner;
             return originalMethod.apply(this, args);
           },
           options,
         );
       } finally {
         await transactionService.cleanup(context);
-        this.currentQueryRunner = null;
+        (this as any).currentQueryRunner = null;
       }
     };
 

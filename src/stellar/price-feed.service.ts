@@ -76,7 +76,7 @@ export class PriceFeedService {
       'https://horizon.stellar.org';
 
     const usdcIssuer =
-      this.configService.get<string>('STELlAR_USSC_ISSUER') ??
+      this.configService.get<string>('STELLAR_USDC_ISSUER') ??
       'GA5SZEJYB37JRC5AVCIA5MOP4RHTM335X2KGX5IHOJWJ3K4MHH7DTRVN';
 
     const { data } = await axios.get<{
@@ -87,8 +87,8 @@ export class PriceFeedService {
       { timeout: 8000 },
     );
 
-    const bestBid = data?.bids?[0]?.price_r;
-    const bestAsk = data?.asks?[0]?.price_r;
+    const bestBid = data?.bids?.[0]?.price_r;
+    const bestAsk = data?.asks?.[0]?.price_r;
     const priceStr = bestBid ?? bestAsk;
     const priceUsd = priceStr ? parseFloat(priceStr) : NaN;
 

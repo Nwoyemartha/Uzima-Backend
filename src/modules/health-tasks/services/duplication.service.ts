@@ -41,7 +41,7 @@ export class DuplicationService {
     return this.taskRepository.save(duplicatedTask);
   }
 
-  async bulkDuplicate(ids: string[], commonOverrides: any = {}) {
+  async bulkDuplicate(ids: string[], commonOverrides: any = {}): Promise<HealthTask[]> {
     const tasks = await this.taskRepository.find({ where: { id: In(ids) } });
     const duplicates = tasks.map(task => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,6 +61,6 @@ export class DuplicationService {
       });
     });
 
-    return this.taskRepository.save(duplicates);
+    return this.taskRepository.save(duplicates as any);
   }
 }

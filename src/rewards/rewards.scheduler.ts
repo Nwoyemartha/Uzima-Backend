@@ -67,8 +67,8 @@ export class RewardsScheduler {
         resetCount += result.affected ?? userIds.length;
       } catch (error) {
         this.logger.error(
-          `[${trigger}] Failed resetting batch at offset ${offset}: ${error.message}`,
-          error.stack,
+          `[${trigger}] Failed resetting batch at offset ${offset}: ${(error as Error).message}`,
+          (error as Error).stack,
         );
 
         for (const userId of userIds) {
@@ -81,8 +81,8 @@ export class RewardsScheduler {
           } catch (userError) {
             failedCount += 1;
             this.logger.error(
-              `[${trigger}] Failed resetting daily rewards for user ${userId}: ${userError.message}`,
-              userError.stack,
+              `[${trigger}] Failed resetting daily rewards for user ${userId}: ${(userError as Error).message}`,
+              (userError as Error).stack,
             );
           }
         }

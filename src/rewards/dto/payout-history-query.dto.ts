@@ -1,6 +1,6 @@
 import { IsOptional, IsEnum, IsDateString, IsInt, Min } from 'class-validator';
 import { Type } from 'class-transformer';
-import { RewardStatus } from '../rewards/enums/reward-status.enum';
+import { RewardStatus } from '../enums/reward-status.enum';
 
 export class PayoutHistoryQueryDto {
   @IsOptional()
@@ -9,11 +9,11 @@ export class PayoutHistoryQueryDto {
   @Min(1)
   page?: number = 1;
 
-  // @IsOptional()
-  // @Type(() => Number)
-  // @IsInt()
-  // @Min(1)
-  // limit?: number = 20;
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit?: number = 20;
 
   @IsOptional()
   @IsDateString()
@@ -27,5 +27,6 @@ export class PayoutHistoryQueryDto {
   @IsEnum(RewardStatus)
   status?: RewardStatus;
 
+  @IsOptional()
   categoryId?: string;
 }

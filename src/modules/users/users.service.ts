@@ -282,7 +282,7 @@ export class UsersService {
     return this.userRepository.findOne({ where: { phoneNumber } });
   }
 
-  async deactivateUser(userId: string): Promise<void> {
+  private async deactivateUserInternal(userId: string): Promise<void> { // internal helper
     const user = await this.findOne(userId);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -432,6 +432,24 @@ export class UsersService {
         return { canLogin: false, reason: 'Account is suspended' };
       default:
         return { canLogin: false, reason: 'Account status unknown' };
+    }
+  }
+
+  /**
+   * Deactivate a user (self-service deactivation)
+   */
+  async deactivateUser(userId: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.isActive = false;
+    user.status = UserStatus.INACTIVE;
+    await this.userRepository.softRemove(user);
+
+    if (this.cacheManager) {
+      await this.cacheManager.del(`user:profile:${userId}`);
     }
   }
 
@@ -594,14 +612,14 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       fullName: user.fullName,
-      phoneNumber: user.phoneNumber,
-      avatar: user.walletAddress,
-      bio: user.referralCode,
+      phoneNumber: user.phoneNumber ?? undefined,
+      avatar: user.walletAddress ?? undefined,
+      bio: user.referralCode ?? undefined,
       preferredLanguage: user.preferredLanguage,
       country: user.country,
-      address: user.address,
-      city: user.city,
-      postalCode: user.postalCode,
+      address: user.address ?? undefined,
+      city: user.city ?? undefined,
+      postalCode: user.postalCode ?? undefined,
       role: user.role,
       status: user.status,
       isVerified: user.isVerified,
@@ -666,27 +684,16 @@ export class UsersService {
   }
 
   /**
+   * Update the last active timestamp for a user
+   */
+  async updateLastActiveAt(userId: string): Promise<void> {
+    await this.userRepository.update(userId, { lastActiveAt: new Date() });
+  }
+
+  /**
    * Delete user preferences (called when user is deleted)
    */
   async deletePreferences(userId: string): Promise<void> {
     await this.preferencesService.deletePreferences(userId);
-  }
-
-  /**
-   * Deactivate a user (self-service deactivation)
-   */
-  async deactivateUser(userId: string): Promise<void> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    user.isActive = false;
-    user.status = UserStatus.INACTIVE;
-    await this.userRepository.softRemove(user);
-
-    if (this.cacheManager) {
-      await this.cacheManager.del(`user:profile:${userId}`);
-    }
   }
 }

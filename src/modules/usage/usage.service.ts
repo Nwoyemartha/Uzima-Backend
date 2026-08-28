@@ -23,8 +23,8 @@ export class UsageService {
       userId,
       event,
       amount,
-      metadata: metadata ? JSON.stringify(metadata) : null,
-    });
+      metadata: metadata ? JSON.stringify(metadata) : undefined,
+    } as any);
     await this.usageRepository.save(usage);
 
     // Check limits and alert

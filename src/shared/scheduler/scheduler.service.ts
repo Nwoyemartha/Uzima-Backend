@@ -52,15 +52,15 @@ export class SchedulerService implements OnModuleInit {
       const job = jobs.get(name);
       let nextRun;
       try {
-        nextRun = job.nextDate().toISO();
+        nextRun = job?.nextDate()?.toISO();
       } catch (e) {
         nextRun = 'error/not scheduled';
       }
       return {
         name,
         nextRun,
-        lastRun: job.lastDate(),
-        isRunning: job.running,
+        lastRun: job?.lastDate(),
+        isRunning: (job as any)?.running ?? false,
       };
     });
   }

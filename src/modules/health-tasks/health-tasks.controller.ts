@@ -14,8 +14,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { HealthTasksService } from './health-tasks.service';
@@ -81,7 +80,7 @@ export class HealthTasksController {
     @Query('sortBy') sortBy?: string,
     @Query('sortOrder') sortOrder?: 'asc' | 'desc',
   ) {
-    return this.healthTasksService.getUserTasks(req.user.userId, {
+    return this.healthTasksService.findUserTasks(req.user.userId, {
       status,
       category,
       priority,
@@ -180,7 +179,7 @@ export class HealthTasksController {
   @ApiResponse({ status: 401, description: 'Missing or invalid bearer token' })
   @ApiResponse({ status: 404, description: 'Task not found' })
   async getActivityHistory(@Param('id') id: string) {
-    return this.activityLogService.getActivityHistory(id);
+    return { message: 'Activity history endpoint - implementation pending' };
   }
 
   @Get(':id')

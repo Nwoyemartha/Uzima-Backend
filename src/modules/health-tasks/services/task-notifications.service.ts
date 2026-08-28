@@ -79,9 +79,9 @@ export class TaskNotificationsService {
       const diff = due - now;
 
       if (diff > 0 && diff <= DUE_SOON_THRESHOLD_MS) {
-        await this.notifyDueSoon(task, userId, pref);
+        await this.notifyDueSoon(task, userId, pref ?? undefined);
       } else if (diff < 0) {
-        await this.notifyOverdue(task, userId, pref);
+        await this.notifyOverdue(task, userId, pref ?? undefined);
       }
     }
   }
@@ -100,7 +100,11 @@ export class TaskNotificationsService {
     if (!userPref) return true;
 
     const key = `task_${event}` as keyof typeof userPref;
-    return userPref[key] !== false;
+    return (userPref as any)[key] !== false;
+  }
+
+  private async isEnabled(userId: string, event: TaskNotificationEvent): Promise<boolean> {
+    return this.isPrefEnabled(userId, event);
   }
 
   private async send(

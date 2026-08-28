@@ -35,17 +35,17 @@ export class User {
   email: string;
 
   @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
-  phoneNumber: string;
+  phoneNumber!: string;
 
   // Backward-compatible alias for code that uses `phone`
   get phone(): string | undefined {
     return this.phoneNumber;
   }
   set phone(value: string | undefined) {
-    this.phoneNumber = value;
+    this.phoneNumber = value as string;
   }
 
-  @Column({ type: 'varchar', length: 2 })
+  @Column({ type: 'varchar', length: 2, default: 'ZZ' })
   country: string;
 
   @Column({ default: 'en' })

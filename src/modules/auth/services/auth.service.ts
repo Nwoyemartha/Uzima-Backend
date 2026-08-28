@@ -92,7 +92,7 @@ export class AuthService {
 
     if (dto.referralCode && this.referralService) {
       try {
-        await this.referralService.redeemReferralCode(user.id, dto.referralCode);
+        await this.referralService.redeemReferral(user.id, { referralCode: dto.referralCode } as any);
       } catch (error) {
         this.logger.warn(
           `Referral code not applied for user ${user.id}: ${(error as Error).message}`,

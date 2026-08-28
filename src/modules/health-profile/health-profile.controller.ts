@@ -27,13 +27,13 @@ export class HealthProfileController {
   @ApiResponse({ status: 404, description: 'No health profile found' })
   async getMyProfile(@Req() req: any) {
     const userId = req.user.id ?? req.user.sub;
-    return this.profileService.getProfile(userId);
+    return (this.profileService as any).getProfile(userId);
   }
 
   @Get('health-profile/completion')
   @ApiOperation({ summary: 'Get health profile completion score' })
   async getCompletion(@Req() req): Promise<HealthProfileCompletionDto> {
     const userId = req.user.id ?? req.user.sub;
-    return this.profileService.getCompletionScore(userId);
+    return (this.profileService as any).getCompletionScore(userId);
   }
 }

@@ -1,11 +1,11 @@
 import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
-import { RewardsService } from './rewards.service';
+import { RewardService } from './reward.service';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { GetPayoutHistoryDto, PaginatedPayoutHistoryDto } from './dto/payout-history.dto';
 
 @Controller('rewards')
 export class RewardsController {
-  constructor(private readonly rewardsService: RewardsService) {}
+  constructor(private readonly rewardService: RewardService) {}
 
   @Get('payouts')
   @UseGuards(JwtAuthGuard)
@@ -13,6 +13,6 @@ export class RewardsController {
     @Req() req,
     @Query() query: GetPayoutHistoryDto,
   ): Promise<PaginatedPayoutHistoryDto> {
-    return this.rewardsService.getPayoutHistory(req.user.id, query);
+    return this.rewardService.getRewardHistory(req.user.id, query);
   }
 }

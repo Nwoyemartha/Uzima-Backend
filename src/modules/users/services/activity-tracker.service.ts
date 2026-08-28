@@ -4,13 +4,11 @@ import { Repository } from 'typeorm';
 import { UserActivity, ActivityType } from '../../../database/entities/user-activity.entity';
 import { Request } from 'express';
 
-interface AuthenticatedRequest extends Request {
-  user: { userId: string; role?: string };
-  get(header: string): string | undefined;
-  headers: Record<string, string | string[] | undefined>;
+type AuthenticatedRequest = Request & {
+  user?: { userId?: string; role?: string } | null;
   connection?: { remoteAddress?: string };
   socket?: { remoteAddress?: string };
-}
+};
 
 interface ActivityMetadata {
   endpoint?: string;

@@ -11,7 +11,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { ListTasksDto } from './dto/list-tasks.dto';
 import { Role } from '@modules/auth/enums/role.enum';
-import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
+import { PaginatedResponseDto } from '../../common/dto/paginated-response.dto';
 import { QueueService } from '../shared/queue/queue.service';
 import {
   NOTIFICATION_QUEUE,
@@ -120,7 +120,7 @@ export class TasksService {
 
     const [tasks, total] = await query.getManyAndCount();
 
-    return new PaginatedResponseDto(tasks, total, page, limit);
+    return new PaginatedResponseDto(tasks as HealthTask[], total, page, limit);
   }
 
   async findByStatus(status: TaskStatus): Promise<HealthTask[]> {

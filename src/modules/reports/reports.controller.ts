@@ -162,7 +162,7 @@ export class ReportsController {
       res.status(400).json({
         statusCode: 400,
         message: 'Failed to generate CSV report',
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }

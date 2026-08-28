@@ -15,7 +15,7 @@ export class LeaderboardProcessor {
     try {
       await this.leaderboardService.rebuildLeaderboards();
     } catch (error) {
-      this.logger.error('Failed to rebuild leaderboard', error.stack);
+      this.logger.error('Failed to rebuild leaderboard', (error as Error).stack);
     }
   }
 }

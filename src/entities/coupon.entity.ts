@@ -8,6 +8,12 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
+export enum CouponStatus {
+  ACTIVE = 'active',
+  REDEEMED = 'redeemed',
+  EXPIRED = 'expired',
+}
+
 @Entity('coupons')
 export class Coupon {
   @PrimaryGeneratedColumn('uuid')
@@ -28,6 +34,15 @@ export class Coupon {
 
   @Column({ type: 'timestamp', nullable: true })
   usedAt: Date | null;
+
+  @Column({ type: 'enum', enum: CouponStatus, default: CouponStatus.ACTIVE })
+  status: CouponStatus;
+
+  @Column({ type: 'int', default: 10 })
+  discount: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  specialistType?: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

@@ -31,7 +31,7 @@ export class RewardService {
 
     const queryBuilder = this.rewardRepo.createQueryBuilder('reward_transaction')
       .leftJoinAndSelect('reward_transaction.task_completion', 'task_completion')
-      .leftJoinAndSelect('task_completion.health_task', 'health_task')
+      .leftJoinAndSelect('task_completion.task', 'task')
       .where('reward_transaction.userId = :userId', { userId });
 
     // Dynamic Filtering
@@ -63,7 +63,7 @@ export class RewardService {
       createdAt: tx.createdAt,
       // Mask transaction hash if not successful to prevent confusion
       stellarTxHash: tx.status === RewardStatus.SUCCESS ? tx.stellarTxHash : undefined,
-      taskTitle: tx.task_completion?.health_task?.title || 'Unknown Task',
+      taskTitle: tx.task_completion?.task?.title || 'Unknown Task',
     }));
 
     const result = {

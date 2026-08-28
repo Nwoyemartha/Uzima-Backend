@@ -13,7 +13,7 @@ import {
   PrioritizableTask,
 } from './services/priority.service';
 import { ActivityLogService } from './services/activity-log.service';
-import { TaskCategory } from '../../database/entities/task-category.entity';
+import { TaskCategory as TaskCategoryEntity } from '../../database/entities/task-category.entity';
 import { TaskTag } from '../../database/entities/task-tag.entity';
 
 @Injectable()
@@ -21,8 +21,8 @@ export class HealthTasksService {
   constructor(
     @InjectRepository(HealthTask)
     private readonly taskRepository: Repository<HealthTask>,
-    @InjectRepository(TaskCategory)
-    private readonly categoryRepository: Repository<TaskCategory>,
+    @InjectRepository(TaskCategoryEntity)
+    private readonly categoryRepository: Repository<TaskCategoryEntity>,
     @InjectRepository(TaskTag)
     private readonly tagRepository: Repository<TaskTag>,
     private readonly priorityService: PriorityService,
@@ -51,7 +51,7 @@ export class HealthTasksService {
       });
       if (category) {
         task.categoryId = dto.categoryId;
-        task.category = category;
+        task.taskCategory = category;
       }
     }
 
@@ -96,14 +96,14 @@ export class HealthTasksService {
         });
         if (category) {
           task.categoryId = dto.categoryId;
-          task.category = category;
+          task.taskCategory = category;
         } else {
-          task.categoryId = null;
-          task.category = null;
+          task.categoryId = undefined;
+          task.taskCategory = undefined;
         }
       } else {
-        task.categoryId = null;
-        task.category = null;
+        task.categoryId = undefined;
+        task.taskCategory = undefined;
       }
     }
 
@@ -181,11 +181,15 @@ export class HealthTasksService {
       .execute();
 
     await this.taskRepository.softDelete(id);
+  }  async findUserTasks(userId: string, filters: any): Promise<HealthTask[]> {
+    return this.taskRepository.find({ where: { createdBy: userId } });
   }
 
-  async getTaskActivity(taskId: string): Promise<import('../../../database/entities/task-activity.entity').TaskActivity[]> {
+  async getTaskActivity(taskId: string): Promise<any[]> {
     return this.activityLogService.getActivityHistory(taskId);
   }
+
+
 
   private buildTaskChangeDetails(
     task: HealthTask,

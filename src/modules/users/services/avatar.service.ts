@@ -35,7 +35,7 @@ export class AvatarService {
       throw new NotFoundException('User not found');
     }
 
-    const oldAvatarUrl = user.avatarUrl;
+    const oldAvatarUrl = user.avatar;
 
     const uploadResult = await this.storageService.saveFile(
       resizedImage,
@@ -45,7 +45,7 @@ export class AvatarService {
     );
 
     await this.userRepository.update(userId, {
-      avatarUrl: uploadResult.url,
+      avatar: uploadResult.url,
     });
 
     if (oldAvatarUrl) {
@@ -66,10 +66,10 @@ export class AvatarService {
       throw new NotFoundException('User not found');
     }
 
-    if (user.avatarUrl) {
-      await this.storageService.deleteFileByUrl(user.avatarUrl);
+    if (user.avatar) {
+      await this.storageService.deleteFileByUrl(user.avatar);
       await this.userRepository.update(userId, {
-        avatarUrl: null,
+        avatar: null,
       });
 
       await this.activityTracker.trackAvatarUpdated(userId, '', request);
@@ -78,7 +78,7 @@ export class AvatarService {
 
   async getAvatarUrl(userId: string): Promise<string | null> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    return user?.avatarUrl || null;
+    return user?.avatar || null;
   }
 
   private validateFile(file: Buffer, mimetype: string): void {

@@ -16,7 +16,7 @@ export class RateLimitGuard extends ThrottlerGuard {
    * Override to extract the real client IP from various headers (X-Forwarded-For, X-Real-IP)
    * This ensures accurate rate limiting even when behind proxies/load balancers
    */
-  protected getTracker(req: Record<string, any>): string {
+  protected async getTracker(req: Record<string, any>): Promise<string> {
     const request = req as Request;
     
     // Get real IP from common proxy headers
@@ -45,7 +45,7 @@ export class RateLimitGuard extends ThrottlerGuard {
     // Calculate correct remaining requests
     const tracker = this.getTracker(context.switchToHttp().getRequest());
     const key = this.generateKey(context, tracker, 'default');
-    const { totalHits } = await this.storageService.getRecord(key);
+    const { totalHits } = await (this as any).storageService.getRecord(key);
     const remaining = Math.max(0, limit - totalHits);
     
     response.set('X-RateLimit-Limit', limit.toString());

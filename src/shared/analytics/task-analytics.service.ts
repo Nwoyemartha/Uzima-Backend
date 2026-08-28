@@ -85,7 +85,7 @@ export class TaskAnalyticsService {
       .select('task.category', 'category')
       .addSelect('COUNT(completion.id)', 'totalAttempted')
       .addSelect(
-        "SUM(CASE WHEN completion.status = 'COMPLETED' THEN 1 ELSE 0 END)",
+        "SUM(CASE WHEN completion.status = 'verified' THEN 1 ELSE 0 END)",
         'totalCompleted',
       )
       .where('completion.createdAt BETWEEN :startDate AND :endDate', {
@@ -135,7 +135,7 @@ export class TaskAnalyticsService {
     const totalCompleted = await this.completionRepo.count({
       where: {
         ...whereCondition,
-        status: TaskCompletionStatus.COMPLETED,
+        status: TaskCompletionStatus.VERIFIED,
       },
     });
 

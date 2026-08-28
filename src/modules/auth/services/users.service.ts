@@ -38,7 +38,7 @@ export class UsersService {
   async getProfile(userId: string): Promise<Omit<User, 'password'>> {
     const user = await this.findById(userId);
     const { password, ...profile } = user as User & { password?: string };
-    return profile;
+    return profile as Omit<User, 'password'>;
   }
 
   async create(
@@ -68,10 +68,11 @@ export class UsersService {
       phoneNumber: userData.phoneNumber,
       firstName,
       lastName,
+      country: userData.country ?? 'ZZ',
       password: hashedPassword,
-    });
+    } as Partial<User>);
 
-    return this.usersRepository.save(user);
+    return this.usersRepository.save(user) as Promise<User>;
   }
 
   async findByVerificationToken(token: string): Promise<User | null> {
@@ -153,7 +154,4 @@ export class UsersService {
    * Fetches the profile data for the authenticated user payload response
    * @param id - User ID
    */
-  async getProfile(id: string): Promise<User> {
-    return this.findById(id);
-  }
 }

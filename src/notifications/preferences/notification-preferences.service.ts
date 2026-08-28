@@ -37,7 +37,7 @@ export class NotificationPreferencesService implements OnModuleInit {
         } catch (error) {
           this.logger.error(
             `Failed to create default preferences for user ${data.userId}:`,
-            error.message,
+            (error as Error).message,
           );
         }
       },
@@ -121,12 +121,12 @@ export class NotificationPreferencesService implements OnModuleInit {
       taskReminders: true,
       rewardAlerts: true,
       streakAlerts: true,
-      quietHoursStart: null,
-      quietHoursEnd: null,
+      quietHoursStart: undefined,
+      quietHoursEnd: undefined,
       timezone: 'Africa/Lagos',
     });
 
-    return this.preferencesRepository.save(defaultPreferences);
+    return this.preferencesRepository.save(defaultPreferences) as unknown as Promise<NotificationPreference>;
   }
 
   /**

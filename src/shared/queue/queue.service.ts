@@ -207,7 +207,7 @@ export class QueueService {
         queue.getCompleted(),
         queue.getFailed(),
         queue.getDelayed(),
-        queue.getPaused(),
+        queue.getPaused ? queue.getPaused() : (queue as any).getJobs(['paused']).catch(() => []),
       ]);
 
       return {

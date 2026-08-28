@@ -29,7 +29,7 @@ import {
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
-import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
+import { PaginatedResponseDto } from '../../common/dto/paginated-response.dto';
 import { HealthTask } from './entities/health-task.entity';
 import { TaskStatus } from './enums/task-status.enum';
 
@@ -163,9 +163,9 @@ export class TasksController {
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
     @Request() req,
   ) {
-    return this.tasksService.updateStatus(
+    return this.tasksService.update(
       id,
-      updateTaskStatusDto.status,
+      { status: updateTaskStatusDto.status } as any,
       req.user.userId,
       req.user.role,
     );

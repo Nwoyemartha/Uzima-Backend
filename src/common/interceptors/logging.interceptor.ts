@@ -25,8 +25,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const response = context.switchToHttp().getResponse<Response>();
     const startTime = Date.now();
 
-    const { method, url, headers, body, ip } = request;
-    const userAgent = headers['user-agent'];
+    const { method, url, headers, body, ip } = request;      const userAgent = headers['user-agent'] as string | undefined;
     const requestId = (request as any).requestId;
     const userId = this.extractUserId(request);
 
@@ -136,7 +135,7 @@ export class LoggingInterceptor implements NestInterceptor {
     try {
       const log = this.requestLogRepository.create(logData);
       await this.requestLogRepository.save(log);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to store request log:', error);
     }
   }
