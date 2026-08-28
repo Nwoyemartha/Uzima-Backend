@@ -36,19 +36,47 @@ describe('AnalyticsService', () => {
     await expect(service.trackEvent('test')).resolves.toBeUndefined();
     expect(mockProvider.trackEvent).toHaveBeenCalledTimes(1);
   });
-  it('should handle empty dataset gracefully without throwing or returning malformed results', async () => {
-      jest.spyOn(service, 'getAnalyticsData').mockImplementation(async () => ({
-        totalTasks: 0,
-        completedTasks: 0,
-        completionRate: 0,
-      }));
+  describe('empty dataset edge cases', () => {
+    it('analyzeActionPatterns returns empty object for empty dataset', () => {
+      service.clearLogs();
+      const start = new Date('2025-01-01');
+      const end = new Date('2025-01-31');
 
-      const result = await service.getAnalyticsData('empty-user-id');
+      const result = service.analyzeActionPatterns(start, end);
+
+      expect(result).toEqual({});
+    });
+
+    it('generateAnalyticsReport returns zeroed report for empty dataset', () => {
+      service.clearLogs();
+      const start = new Date('2025-01-01');
+      const end = new Date('2025-01-31');
+
+      const result = service.generateAnalyticsReport(start, end);
 
       expect(result).toBeDefined();
-      expect(result.totalTasks).toBe(0);
-      expect(result.completedTasks).toBe(0);
-      expect(result.completionRate).toBe(0);
+      expect(result.totalUserActions).toBe(0);
+      expect(result.totalMetricsRecorded).toBe(0);
+      expect(result.topActionPatterns).toEqual([]);
+      expect(result.averageSystemMetrics).toEqual({});
+      expect(result.timeframe).toEqual({ start, end });
     });
+
+    it('queryUserActions returns empty array for empty dataset', () => {
+      service.clearLogs();
+
+      const result = service.queryUserActions({});
+
+      expect(result).toEqual([]);
+    });
+
+    it('querySystemMetrics returns empty array for empty dataset', () => {
+      service.clearLogs();
+
+      const result = service.querySystemMetrics({});
+
+      expect(result).toEqual([]);
+    });
+  });
 });
 
