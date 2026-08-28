@@ -216,20 +216,62 @@ describe('TaskAnalyticsService', () => {
           totalAttempted: 4,
           totalCompleted: 2,
           completionRate: 50,
-          it('should return default zero metrics when task dataset is empty', async () => {
-      jest.spyOn(service, 'calculateTaskMetrics').mockImplementation(async () => ({
-        averageCompletionTime: 0,
-        tasksByStatus: {},
-      }));
-
-      const taskAnalytics = await service.calculateTaskMetrics('empty-user-id');
-
-      expect(taskAnalytics).toBeDefined();
-      expect(taskAnalytics.averageCompletionTime).toBe(0);
-      expect(taskAnalytics.tasksByStatus).toEqual({});
-    });
         },
       ]);
+    });
+  });
+
+  describe('empty dataset edge cases', () => {
+    it('getStats returns zeroed stats for empty dataset', async () => {
+      mockCompletionRepo.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      qbMock.getRawMany.mockResolvedValueOnce([]);
+
+      const result = await service.getStats({ period: 'weekly' });
+
+      expect(result).toBeDefined();
+      expect(result.totalAttempted).toBe(0);
+      expect(result.totalCompleted).toBe(0);
+      expect(result.completionRate).toBe(0);
+      expect(result.categoryBreakdown).toEqual([]);
+      expect(result.period).toBe('weekly');
+      expect(result.dateRange).toBeDefined();
+    });
+
+    it('getCategoryBreakdown returns empty array for empty dataset', async () => {
+      qbMock.getRawMany.mockResolvedValueOnce([]);
+
+      const result = await service.getCategoryBreakdown(
+        new Date('2025-01-01'),
+        new Date('2025-01-08'),
+      );
+
+      expect(result).toEqual([]);
+    });
+
+    it('getWeeklyStats returns zeroed stats for empty dataset', async () => {
+      mockCompletionRepo.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      qbMock.getRawMany.mockResolvedValueOnce([]);
+
+      const result = await service.getWeeklyStats();
+
+      expect(result).toBeDefined();
+      expect(result.totalAttempted).toBe(0);
+      expect(result.totalCompleted).toBe(0);
+      expect(result.completionRate).toBe(0);
+      expect(result.period).toBe('weekly');
+    });
+
+    it('getDailyStats returns zeroed stats for empty dataset', async () => {
+      mockCompletionRepo.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      qbMock.getRawMany.mockResolvedValueOnce([]);
+
+      const result = await service.getDailyStats();
+
+      expect(result).toBeDefined();
+      expect(result.totalAttempted).toBe(0);
+      expect(result.totalCompleted).toBe(0);
+      expect(result.completionRate).toBe(0);
+      expect(result.period).toBe('daily');
     });
   });
 });
